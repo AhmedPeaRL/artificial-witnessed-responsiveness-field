@@ -1,18 +1,14 @@
-let silenceTimer = null;
+import { observeField, writeField } from "../shared-field.js";
 
-export function attachSilenceWitness(timeout = 5000) {
-  reset();
+let lastPresence = Date.now();
 
-  ["mousemove", "keydown", "click", "touchstart"].forEach(evt => {
-    window.addEventListener(evt, reset);
-  });
-
-  function reset() {
-    if (silenceTimer) clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(enterSilence, timeout);
+observeField((state) => {
+  if (state.presence) {
+    lastPresence = Date.now();
+    writeField({ silence: false });
   }
 
-  function enterSilence() {
-    document.body.classList.add("silence-state");
+  if (Date.now() - lastPresence > 6000) {
+    writeField({ silence: true });
   }
-}
+});
