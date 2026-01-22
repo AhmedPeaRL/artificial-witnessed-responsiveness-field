@@ -2,6 +2,7 @@ const button = document.getElementById("enter");
 const input = document.getElementById("input");
 const response = document.getElementById("response");
 import { attachTemporalWitness } from "./temporal-residual-witness/index.js";
+import { PerceptualDriftBoundary } from './field/perceptual-drift-boundary.js';
 
 let used = false;
 
