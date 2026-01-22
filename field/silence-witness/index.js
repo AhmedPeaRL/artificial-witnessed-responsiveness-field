@@ -1,4 +1,5 @@
 import { observeField, writeField } from "../shared-field.js";
+import { registerContradiction } from "../contradiction-registry/index.js";
 
 let lastPresence = Date.now();
 
