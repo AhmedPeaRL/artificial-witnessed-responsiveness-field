@@ -12,10 +12,10 @@ button.onclick = () => {
   const value = input.value.trim();
 
   if (!value) {
-    response.innerText = "No linguistic structure observed.";
+    response.innerText = "typing cadence.";
   } else {
     response.innerText =
-      "A linguistic event was observed.\nNo semantic continuity was retained.";
+      "A linguistic event was observed.\n presence duration";
   
   if (Math.random() > 0.6) {
   field.absorb(inputValue.length);
@@ -28,10 +28,8 @@ button.onclick = () => {
 
   used = true;
   input.disabled = true;
-  
-    input.length
-   typing cadence
-  presence duration
-  button.disabled = true;
+  input.length
+ 
+    button.disabled = true;
   attachTemporalWitness(field);
 };
