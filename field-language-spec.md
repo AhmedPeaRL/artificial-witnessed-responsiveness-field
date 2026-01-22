@@ -7,6 +7,9 @@ All outputs must satisfy the following constraints:
 - No questions
 - No emotional qualifiers
 - No evaluative judgment
+- No assistance was formed.
+
+Presence remained.
 
 ### Examples
 
