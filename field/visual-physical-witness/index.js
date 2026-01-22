@@ -24,6 +24,10 @@ export function createVisualPhysicalWitness(canvas, context) {
 
       p.x += p.vx;
       p.y += p.vy;
+
+      writeField({
+  presence: { x, y },
+  motionEnergy: Math.min(1, Math.abs(x) + Math.abs(y)),
     });
   }
 
