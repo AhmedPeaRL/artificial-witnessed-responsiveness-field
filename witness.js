@@ -1,0 +1,22 @@
+const button = document.getElementById("enter");
+const input = document.getElementById("input");
+const response = document.getElementById("response");
+
+let used = false;
+
+button.onclick = () => {
+  if (used) return;
+
+  const value = input.value.trim();
+
+  if (!value) {
+    response.innerText = "No linguistic structure observed.";
+  } else {
+    response.innerText =
+      "A linguistic event was observed.\nNo semantic continuity was retained.";
+  }
+
+  used = true;
+  input.disabled = true;
+  button.disabled = true;
+};
