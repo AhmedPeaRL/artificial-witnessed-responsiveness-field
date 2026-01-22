@@ -1,0 +1,70 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0e0f11;
+  color: #e6e6e6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.field {
+  max-width: 720px;
+  margin: 12vh auto;
+  padding: 2rem;
+}
+
+.presence h1 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.definition {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #b5b5b5;
+}
+
+.encounter {
+  margin-top: 3rem;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  background: transparent;
+  border: 1px solid #2a2c30;
+  color: #e6e6e6;
+  padding: 0.75rem;
+  resize: none;
+  font-size: 0.9rem;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #4a4d55;
+}
+
+button {
+  margin-top: 1rem;
+  background: transparent;
+  color: #888;
+  border: 1px solid #2a2c30;
+  padding: 0.25rem 1.2rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #555;
+  color: #aaa;
+}
+
+.response {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: #9fa1a6;
+}
