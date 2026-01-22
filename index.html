@@ -1,28 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Artificial Witnessed Responsiveness Field</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 <body>
-  <div style="margin: auto; width: 60%; text-align: center;">
-    <h1>Artificial Witnessed Responsiveness Field</h1>
-    <p>This interface does not assist. It responds.</p>
 
-    <textarea id="inputField" rows="3" style="width: 100%;"></textarea>
+  <main class="field">
 
-    <button id="submitButton">—</button>
+    <section class="presence">
+      <h1>Artificial Witnessed Responsiveness Field</h1>
 
-    <div id="outputArea" style="margin-top: 1em;"></div>
-  </div>
+      <p class="definition">
+        This interface does not assist.  
+        It does not learn.  
+        It does not remember.  
+        <br /><br />
+        It responds once,  
+        without intention,  
+        without continuity.
+      </p>
+    </section>
 
-<script>
-document.getElementById("submitButton").onclick = function() {
-  const text = document.getElementById("inputField").value;
-  if (!text.trim()) {
-    document.getElementById("outputArea").innerText = "No linguistic structure detected.";
-    return;
-  }
-  document.getElementById("outputArea").innerText = "Linguistic structure observed without stable semantic convergence.";
-  // No memory, no state, one shot
-};
-</script>
+    <section class="encounter">
+      <textarea id="input" aria-label="unlabeled input"></textarea>
+      <button id="enter">—</button>
+    </section>
 
+    <section class="response" id="response"></section>
+
+  </main>
+
+  <script src="witness.js"></script>
 </body>
 </html>
