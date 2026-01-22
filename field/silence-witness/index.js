@@ -9,6 +9,13 @@ observeField((state) => {
   }
 
   if (Date.now() - lastPresence > 6000) {
-    writeField({ silence: true });
+  if (state.motionEnergy > 0.2) {
+    registerContradiction(
+      "SilenceWitness",
+      "Silence detected while motion energy persists"
+    );
+  }
+
+  writeField({ silence: true });
   }
 });
