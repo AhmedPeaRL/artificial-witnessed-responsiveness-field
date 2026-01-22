@@ -44,6 +44,11 @@ textarea {
   font-size: 0.9rem;
 }
 
+.silence-state canvas {
+  opacity: 0.15;
+  transition: opacity 2s ease;
+}
+
 textarea:focus {
   outline: none;
   border-color: #4a4d55;
