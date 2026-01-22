@@ -51,8 +51,11 @@ function loop() {
 
   visualWitness.update(targetX, targetY);
   visualWitness.draw();
+  
 
   observeContradiction(fieldState);
+  fieldState.energy *= 0.9992;
+  fieldState.motion += Math.random() * 0.0001;
   
   requestAnimationFrame(loop);
 }
