@@ -16,6 +16,9 @@ button.onclick = () => {
   } else {
     response.innerText =
       "A linguistic event was observed.\nNo semantic continuity was retained.";
+  
+  if (Math.random() > 0.6) {
+  field.absorb(inputValue.length);
   }
 
   used = true;
