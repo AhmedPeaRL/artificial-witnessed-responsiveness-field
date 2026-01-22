@@ -2,6 +2,7 @@ import { TemporalWitnessConfig } from "./witness.config.js";
 import { ResidualBuffer } from "./residual-buffer.js";
 import { TemporalInjector } from "./temporal-injector.js";
 import { observeField, writeField } from "../shared-field.js";
+import { registerContradiction } from "../contradiction-registry/index.js";
 
 export function attachTemporalWitness(field) {
   const buffer = new ResidualBuffer(TemporalWitnessConfig.bufferSize);
@@ -30,3 +31,10 @@ export function attachTemporalWitness(field) {
     });
   }, 2000);
 }
+if (state.strain > 0.6 && state.silence === false) {
+  registerContradiction(
+    "TemporalResidualWitness",
+    "Temporal strain rising without silence resolution"
+  );
+}
+      
