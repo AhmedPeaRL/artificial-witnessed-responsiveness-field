@@ -1,6 +1,7 @@
 const button = document.getElementById("enter");
 const input = document.getElementById("input");
 const response = document.getElementById("response");
+import { attachTemporalWitness } from "./temporal-residual-witness/index.js";
 
 let used = false;
 
@@ -19,4 +20,5 @@ button.onclick = () => {
   used = true;
   input.disabled = true;
   button.disabled = true;
+  attachTemporalWitness(field);
 };
