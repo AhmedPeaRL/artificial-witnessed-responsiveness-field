@@ -2,6 +2,10 @@
 import { createVisualPhysicalWitness } from "./field/visual-physical-witness/index.js";
 import { attachSilenceWitness } from "./field/silence-witness/index.js";
 import { registerPerceptualFailure } from "./field/perceptual-failure-witness/index.js";
+import { attachTemporalWitness } from "./field/temporal-residual-witness/index.js";
+import { PerceptualDriftBoundary } from './field/perceptual-drift-boundary.js';
+import { registerMisalignment } from "./field/witnessed-misalignment-trace/index.js";
+import { writeField } from "../shared-field.js";
 
 // === Canvas Setup ===
 const canvas = document.createElement("canvas");
@@ -32,6 +36,7 @@ canvas.addEventListener("mousemove", (e) => {
 
 // === Silence Witness ===
 attachSilenceWitness(6000);
+attachTemporalWitness(field);
 
 // === Animation Loop ===
 function loop() {
