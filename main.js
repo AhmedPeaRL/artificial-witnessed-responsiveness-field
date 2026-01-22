@@ -6,6 +6,7 @@ import { attachTemporalWitness } from "./field/temporal-residual-witness/index.j
 import { PerceptualDriftBoundary } from './field/perceptual-drift-boundary.js';
 import { registerMisalignment } from "./field/witnessed-misalignment-trace/index.js";
 import { writeField } from "../shared-field.js";
+import { observeContradiction } from "./field/contradiction-witness/index.js";
 
 // === Canvas Setup ===
 const canvas = document.createElement("canvas");
@@ -51,6 +52,8 @@ function loop() {
   visualWitness.update(targetX, targetY);
   visualWitness.draw();
 
+  observeContradiction(fieldState);
+  
   requestAnimationFrame(loop);
 }
 
