@@ -19,10 +19,19 @@ button.onclick = () => {
   
   if (Math.random() > 0.6) {
   field.absorb(inputValue.length);
+  
+    if (fieldState.textUsed) return;
+  fieldState.textUsed = true;
+
+    if (Math.random() < 0.3) return; // no linguistic formation
   }
 
   used = true;
   input.disabled = true;
+  
+    input.length
+   typing cadence
+  presence duration
   button.disabled = true;
   attachTemporalWitness(field);
 };
