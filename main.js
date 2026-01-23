@@ -5,7 +5,7 @@ import { registerPerceptualFailure } from "./field/perceptual-failure-witness/in
 import { attachTemporalWitness } from "./field/temporal-residual-witness/index.js";
 import { PerceptualDriftBoundary } from './field/perceptual-drift-boundary.js';
 import { registerMisalignment } from "./field/witnessed-misalignment-trace/index.js";
-import { writeField } from "../shared-field.js";
+import { writeField, getFieldState } from "./field/shared-field.js";
 import { observeContradiction } from "./field/contradiction-witness/index.js";
 
 // === Canvas Setup ===
@@ -53,8 +53,7 @@ function loop() {
   visualWitness.draw();
   
 
-  observeContradiction(fieldState);
-  fieldState.energy *= 0.9992;
+  observeContradiction(getFieldState());
   fieldState.motion += Math.random() * 0.0001;
   
   requestAnimationFrame(loop);
