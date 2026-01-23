@@ -1,3 +1,5 @@
+import { writeField, readField } from "../shared-field.js";
+
 export function createVisualPhysicalWitness(canvas, context) {
   const particles = [];
   const COUNT = 120;
@@ -12,26 +14,34 @@ export function createVisualPhysicalWitness(canvas, context) {
   }
 
   function update(targetX, targetY) {
+    const fieldState = readField();
+
     particles.forEach(p => {
       const dx = targetX - p.x;
       const dy = targetY - p.y;
 
+      const damping = fieldState.silence ? 0.86 : 0.92;
+
       p.vx += dx * 0.0006;
       p.vy += dy * 0.0006;
 
-      p.vx *= 0.92;
-      p.vy *= 0.92;
+      p.vx *= damping;
+      p.vy *= damping;
 
       p.x += p.vx;
       p.y += p.vy;
+    });
 
-      fieldState.energy *= 0.9992;
-      fieldState.motion += Math.random() * 0.0001;
-      
-      writeField({
-  presence: { x: targetX, y: targetY },
-  motionEnergy: Math.min(1, Math.abs(targetX) + Math.abs(targetY)),
-});
+    const motionEnergy = Math.min(
+      1,
+      Math.abs(targetX - canvas.width / 2) / (canvas.width / 2) +
+      Math.abs(targetY - canvas.height / 2) / (canvas.height / 2)
+    );
+
+    writeField({
+      presence: { x: targetX, y: targetY },
+      motionEnergy
+    });
   }
 
   function draw() {
@@ -46,4 +56,4 @@ export function createVisualPhysicalWitness(canvas, context) {
   }
 
   return { update, draw };
-}
+      }
