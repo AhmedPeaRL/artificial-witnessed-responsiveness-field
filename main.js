@@ -1,17 +1,15 @@
 // main.js
 import { createVisualPhysicalWitness } from "./field/visual-physical-witness/index.js";
 import { attachSilenceWitness } from "./field/silence-witness/index.js";
-import { registerPerceptualFailure } from "./field/perceptual-failure-witness/index.js";
 import { attachTemporalWitness } from "./field/temporal-residual-witness/index.js";
-import { PerceptualDriftBoundary } from './field/perceptual-drift-boundary.js';
+import { registerPerceptualFailure } from "./field/perceptual-failure-witness/index.js";
 import { registerMisalignment } from "./field/witnessed-misalignment-trace/index.js";
-import { writeField, getFieldState } from "./field/shared-field.js";
+import { readField, observeField } from "./field/shared-field.js";
 import { observeContradiction } from "./field/contradiction-witness/index.js";
 
 // === Canvas Setup ===
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
-
 document.body.appendChild(canvas);
 
 function resize() {
@@ -21,41 +19,53 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-// === Visual / Physical Witness ===
+// === Visual Witness ===
 const visualWitness = createVisualPhysicalWitness(canvas, ctx);
 
-// === Target (Observer Presence) ===
+// === Presence Tracking ===
 let targetX = canvas.width / 2;
 let targetY = canvas.height / 2;
 let lastMove = Date.now();
 
-canvas.addEventListener("mousemove", (e) => {
+canvas.addEventListener("mousemove", e => {
   targetX = e.clientX;
   targetY = e.clientY;
   lastMove = Date.now();
 });
 
-// === Silence Witness ===
+// === Witnesses ===
 attachSilenceWitness(6000);
-attachTemporalWitness(field);
+attachTemporalWitness({
+  snapshot: () => [],
+  findNearest: () => null
+});
+
+// === Silence → UI coupling ===
+observeField(state => {
+  if (state.silence) {
+    document.body.classList.add("silence-state");
+  } else {
+    document.body.classList.remove("silence-state");
+  }
+});
 
 // === Animation Loop ===
 function loop() {
-  const now = Date.now();
-  const idleTime = now - lastMove;
+  const state = readField();
 
-  // إذا الحركة عنيفة جدًا → فشل إدراك
-  if (Math.abs(targetX - canvas.width / 2) > canvas.width * 0.45) {
+  if (state.motionEnergy > 0.95 && state.silence) {
     registerPerceptualFailure();
   }
 
+  if (state.strain > 0.55 && Math.random() < 0.002) {
+    registerMisalignment(1);
+  }
+
+  observeContradiction(state);
+
   visualWitness.update(targetX, targetY);
   visualWitness.draw();
-  
 
-  observeContradiction(getFieldState());
-  fieldState.motion += Math.random() * 0.0001;
-  
   requestAnimationFrame(loop);
 }
 
