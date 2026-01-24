@@ -1,3 +1,10 @@
+window.onerror = function(msg, src, line, col) {
+  document.body.innerHTML =
+    "<pre style='color:red;white-space:pre-wrap'>" +
+    msg + "\n" + src + ":" + line + ":" + col +
+    "</pre>";
+};
+
 const canvas = document.getElementById("field-canvas");
 const ctx = canvas.getContext("2d");
 
