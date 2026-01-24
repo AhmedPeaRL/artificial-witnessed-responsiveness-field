@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Artificial Witnessed Responsiveness Field</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>AWRF</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      color: white;
+      font-family: monospace;
+    }
+    #witness-input {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: transparent;
+      border: 1px solid #444;
+      color: white;
+      padding: 8px;
+    }
+  </style>
 </head>
 <body>
 
-  <main class="field">
-    <section class="presence">
-      <h1>Artificial Witnessed Responsiveness Field</h1>
-      <p class="definition">
-        This interface does not assist.<br>
-        It does not learn.<br>
-        It does not remember.<br><br>
-        It responds once,<br>
-        without intention,<br>
-        without continuity.
-      </p>
-    </section>
+<canvas id="field-canvas"></canvas>
+<input id="witness-input" placeholder="enter"/>
 
-    <section class="encounter">
-      <input id="witness-input" type="text" placeholder="Enter without expectation" />
-    </section>
-
-    <section id="response"></section>
-  </main>
-
-  <canvas id="field-canvas"></canvas>
-
-  <script type="module" src="./main.js"></script>
+<script src="./main.js"></script>
 </body>
 </html>
