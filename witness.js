@@ -2,7 +2,6 @@ import { semanticDisturbance } from "./field/semantic-disturbance-gate.js";
 
 let ctx;
 let particles = [];
-let t = 0;
 
 export function initField(canvas) {
   canvas.width = window.innerWidth;
@@ -53,12 +52,5 @@ function animate() {
   });
 
   requestAnimationFrame(animate);
- 
-  t += 0.002; // نبض بطيء جدًا
-
-  const driftX = canvas.width / 2 + Math.sin(t) * 40;
-  const driftY = canvas.height / 2 + Math.cos(t * 0.7) * 40;
-
-  witness.update(driftX, driftY);
-  witness.draw();
+  
 }
