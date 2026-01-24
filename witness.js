@@ -1,4 +1,6 @@
-let ctx, particles = [];
+let ctx;
+let particles = [];
+let disturbance = 0;
 
 export function initField(canvas) {
   const dpr = window.devicePixelRatio || 1;
@@ -10,7 +12,7 @@ export function initField(canvas) {
   ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
 
-  particles = Array.from({ length: 220 }, () => createParticle());
+  particles = Array.from({ length: 260 }, createParticle);
 
   animate();
 }
@@ -19,43 +21,49 @@ function createParticle() {
   return {
     x: Math.random() * window.innerWidth,
     y: Math.random() * window.innerHeight,
-    vx: 0,
-    vy: 0,
-    r: Math.random() * 1.6 + 0.3,
-    life: Math.random()
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    r: Math.random() * 1.8 + 0.4
   };
 }
 
 export function disturbField(seed) {
-  const intensity = Math.min(seed.length / 12, 2);
+  const intensity = Math.min(seed.length / 8, 3);
+  disturbance += intensity * 4;
 
   particles.forEach(p => {
     const angle = Math.random() * Math.PI * 2;
-    const force = (Math.random() * 3 + 1) * intensity;
-
-    p.vx += Math.cos(angle) * force;
-    p.vy += Math.sin(angle) * force;
+    p.vx += Math.cos(angle) * intensity;
+    p.vy += Math.sin(angle) * intensity;
   });
 }
 
 function animate() {
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+  disturbance *= 0.92;
+
   particles.forEach(p => {
     p.x += p.vx;
     p.y += p.vy;
 
-    p.vx *= 0.92;
-    p.vy *= 0.92;
+    p.vx *= 0.96;
+    p.vy *= 0.96;
 
-    if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
-    if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
+    wrap(p);
 
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.arc(p.x, p.y, p.r + disturbance * 0.03, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${0.6 + disturbance * 0.01})`;
     ctx.fill();
   });
 
   requestAnimationFrame(animate);
-      }
+}
+
+function wrap(p) {
+  if (p.x < 0) p.x = window.innerWidth;
+  if (p.x > window.innerWidth) p.x = 0;
+  if (p.y < 0) p.y = window.innerHeight;
+  if (p.y > window.innerHeight) p.y = 0;
+}
