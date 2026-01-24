@@ -2,71 +2,54 @@ import { semanticDisturbance } from "./field/semantic-disturbance-gate.js";
 
 let ctx;
 let particles = [];
-let disturbance = 0;
 
 export function initField(canvas) {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-  ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
+  ctx = canvas.getContext("2d");
 
-  particles = Array.from({ length: 260 }, createParticle);
+  particles = Array.from({ length: 180 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: 0,
+    vy: 0,
+    r: Math.random() * 1.4 + 0.4
+  }));
 
   animate();
 }
 
-function createParticle() {
-  return {
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    vx: (Math.random() - 0.5) * 0.3,
-    vy: (Math.random() - 0.5) * 0.3,
-    r: Math.random() * 1.8 + 0.4
-  };
-}
+export function disturbField(seed = "") {
+  const force = Math.min(seed.length / 6, 3);
 
-export function disturbField(seed) {
-  const intensity = Math.min(seed.length / 8, 3);
-  disturbance += intensity * 4;
-
-  const semantic = semanticDisturbance();
   particles.forEach(p => {
-    const angle = Math.random() * Math.PI * 2;
-    p.vx += Math.cos(angle) * intensity;
-    p.vy += Math.sin(angle) * intensity;
+    const a = Math.random() * Math.PI * 2;
+    p.vx += Math.cos(a) * force;
+    p.vy += Math.sin(a) * force;
   });
 }
 
 function animate() {
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-  disturbance *= 0.92;
+  const semantic = semanticDisturbance();
 
   particles.forEach(p => {
     p.x += p.vx;
     p.y += p.vy;
 
-    p.vx *= 0.96;
-    p.vy *= 0.96;
+    p.vx *= 0.94;
+    p.vy *= 0.94;
 
-    wrap(p);
+    if (p.x < 0 || p.x > window.innerWidth) p.vx *= -1;
+    if (p.y < 0 || p.y > window.innerHeight) p.vy *= -1;
 
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r + disturbance * 0.03, 0, Math.PI * 2);
-    ctx.fillStyle = `hsla(${semantic.hue}, 100%, 85%, ${0.5 + semantic.depth * 0.12})`;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${semantic.hue},100%,85%,${0.45 + semantic.depth * 0.15})`;
     ctx.fill();
   });
 
   requestAnimationFrame(animate);
-}
-
-function wrap(p) {
-  if (p.x < 0) p.x = window.innerWidth;
-  if (p.x > window.innerWidth) p.x = 0;
-  if (p.y < 0) p.y = window.innerHeight;
-  if (p.y > window.innerHeight) p.y = 0;
 }
