@@ -1,45 +1,32 @@
 import { initField, disturbField } from "./witness.js";
+import { attachSilenceWitness } from "./field/silence-witness/index.js";
+import { attachTemporalWitness } from "./field/temporal-residual-witness/index.js";
+import { observeField } from "./field/shared-field.js";
 
 const canvas = document.getElementById("field-canvas");
 const input = document.getElementById("witness-input");
-const response = document.getElementById("response");
 
 initField(canvas);
 
-// حضور حركي دائم
-canvas.addEventListener("mousemove", e => {
-  disturbField(".");
-});
-
-// إدخال لغوي = تشوه + أثر لفظي
+// ربط الإدخال بالتشويه
+let locked = false;
 input.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    const value = input.value.trim();
+  if (e.key === "Enter" && !locked) {
+    locked = true;
+    disturbField(input.value);
     input.value = "";
-
-    if (!value) return;
-
-    disturbField(value);
-
-    // Output لغوي غير تراكمي
-    response.textContent = generateWitnessLine(value);
-    response.style.opacity = "1";
-
-    setTimeout(() => {
-      response.style.opacity = "0";
-    }, 1400);
+    setTimeout(() => locked = false, 1200);
   }
 });
 
-function generateWitnessLine(seed) {
-  const forms = [
-    "The field registered a disturbance.",
-    "Presence altered.",
-    "No continuity preserved.",
-    "An impulse passed through.",
-    "The field absorbed without memory.",
-    "A trace appeared and vanished."
-  ];
+// الشهود (مراقبة فقط)
+attachSilenceWitness(6000);
+attachTemporalWitness({
+  snapshot: () => [],
+  findNearest: () => null
+});
 
-  return forms[Math.floor(Math.random() * forms.length)];
-}
+// coupling صامت مع الواجهة
+observeField(state => {
+  document.body.classList.toggle("silence-state", state.silence);
+});
