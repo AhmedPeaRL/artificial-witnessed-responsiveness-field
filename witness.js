@@ -1,3 +1,5 @@
+import { semanticDisturbance } from "./field/semantic-disturbance-gate.js";
+
 let ctx;
 let particles = [];
 let disturbance = 0;
@@ -31,6 +33,7 @@ export function disturbField(seed) {
   const intensity = Math.min(seed.length / 8, 3);
   disturbance += intensity * 4;
 
+  const semantic = semanticDisturbance();
   particles.forEach(p => {
     const angle = Math.random() * Math.PI * 2;
     p.vx += Math.cos(angle) * intensity;
@@ -54,7 +57,7 @@ function animate() {
 
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r + disturbance * 0.03, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${0.6 + disturbance * 0.01})`;
+    ctx.fillStyle = `hsla(${semantic.hue}, 100%, 85%, ${0.5 + semantic.depth * 0.12})`;
     ctx.fill();
   });
 
