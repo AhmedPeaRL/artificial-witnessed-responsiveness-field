@@ -31,6 +31,9 @@ const visualWitness = createVisualPhysicalWitness(canvas, ctx);
 let targetX = canvas.width / 2;
 let targetY = canvas.height / 2;
 let lastMove = Date.now();
+
+initField(canvas);
+
 let lock = false;
 
 input.addEventListener('keydown', (e) => {
