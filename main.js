@@ -6,11 +6,13 @@ import { registerPerceptualFailure } from "./field/perceptual-failure-witness/in
 import { registerMisalignment } from "./field/witnessed-misalignment-trace/index.js";
 import { readField, observeField } from "./field/shared-field.js";
 import { observeContradiction } from "./field/contradiction-witness/index.js";
+import { initField, disturbField } from './witness.js';
 
 // === Canvas Setup ===
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 document.body.appendChild(canvas);
+
 
 function resize() {
   canvas.width = window.innerWidth;
@@ -19,6 +21,9 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
+const canvas = document.getElementById('field-canvas');
+const input = document.getElementById('witness-input');
+
 // === Visual Witness ===
 const visualWitness = createVisualPhysicalWitness(canvas, ctx);
 
@@ -26,7 +31,21 @@ const visualWitness = createVisualPhysicalWitness(canvas, ctx);
 let targetX = canvas.width / 2;
 let targetY = canvas.height / 2;
 let lastMove = Date.now();
+let lock = false;
 
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !lock) {
+    lock = true;
+
+    const value = input.value.trim();
+    input.value = '';
+
+    disturbField(value);
+
+    setTimeout(() => {
+      lock = false;
+    }, 1200);
+    
 canvas.addEventListener("mousemove", e => {
   targetX = e.clientX;
   targetY = e.clientY;
