@@ -1,32 +1,47 @@
-import { initField, disturbField } from "./witness.js";
-import { attachSilenceWitness } from "./field/silence-witness/index.js";
-import { attachTemporalWitness } from "./field/temporal-residual-witness/index.js";
-import { observeField } from "./field/shared-field.js";
-
 const canvas = document.getElementById("field-canvas");
-const input = document.getElementById("witness-input");
+const ctx = canvas.getContext("2d");
 
-initField(canvas);
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// ربط الإدخال بالتشويه
-let locked = false;
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !locked) {
-    locked = true;
-    disturbField(input.value);
-    input.value = "";
-    setTimeout(() => locked = false, 1200);
-  }
-});
+let particles = Array.from({ length: 150 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  vx: 0,
+  vy: 0
+}));
 
-// الشهود (مراقبة فقط)
-attachSilenceWitness(6000);
-attachTemporalWitness({
-  snapshot: () => [],
-  findNearest: () => null
-});
+document.getElementById("witness-input")
+  .addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      particles.forEach(p => {
+        const a = Math.random() * Math.PI * 2;
+        p.vx += Math.cos(a) * 2;
+        p.vy += Math.sin(a) * 2;
+      });
+      e.target.value = "";
+    }
+  });
 
-// coupling صامت مع الواجهة
-observeField(state => {
-  document.body.classList.toggle("silence-state", state.silence);
-});
+function loop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.95;
+    p.vy *= 0.95;
+
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2);
+    ctx.fillStyle = "white";
+    ctx.fill();
+  });
+
+  requestAnimationFrame(loop);
+}
+
+loop();
