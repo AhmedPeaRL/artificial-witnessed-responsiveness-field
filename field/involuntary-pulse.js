@@ -1,19 +1,16 @@
 let lastPulse = Date.now();
 
-export function involuntaryPulse(disturb) {
+export function involuntaryPulse(disturbFn) {
   const now = Date.now();
 
-  // فاصل غير منتظم – لا يمكن توقعه
-  if (now - lastPulse < 4000 + Math.random() * 6000) return;
+  // فجوة غير منتظمة – لا يمكن توقعها
+  const gap = 3500 + Math.random() * 7000;
+  if (now - lastPulse < gap) return;
 
   lastPulse = now;
 
-  const silentToken = Math.random().toString(36).slice(2, 7);
+  // تشوّه خفيف جدًا بلا سبب إدخالي
+  const weight = 0.08 + Math.random() * 0.12;
 
-  disturb({
-    source: "field",
-    weight: 0.15,
-    trace: silentToken,
-    involuntary: true
-  });
+  disturbFn(weight);
 }
