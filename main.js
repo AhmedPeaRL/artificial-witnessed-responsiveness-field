@@ -41,11 +41,12 @@ const button = document.getElementById("enter");
 
 button.onclick = () => {
   input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    button.click();
-  }
-});
+    if (e.key === "Enter") {
+      e.preventDefault();
+      button.click();
+    }
+  });
+
   const v = input.value.trim();
   if (!v) return;
   disturb(Math.min(1, v.length / 12));
@@ -70,7 +71,11 @@ canvas.addEventListener("touchmove", e => {
 // loop
 function loop() {
   requestAnimationFrame(loop);
+
   tick(0.002);
+
+  // ← هنا القلب اللاإرادي
+  involuntaryPulse(disturb);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
