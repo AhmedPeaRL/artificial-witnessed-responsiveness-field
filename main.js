@@ -1,4 +1,4 @@
-import { Field, tick, disturb, updatePresence } from "./field.js";
+import { Field, tick, disturb, updatePresence, RhythmicField } from "./field.js";
 import { receiveInput } from "./reception/input.js";
 import { manifest } from "./manifestation/particles.js";
 import { enforceSilence } from "./silence/silence.js";
