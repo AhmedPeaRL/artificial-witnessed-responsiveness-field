@@ -1,23 +1,21 @@
+// field/shared-field.js
+// Holds instantaneous field state without persistence or recall.
+
 const fieldState = {
-  presence: { x: 0.5, y: 0.5 },
-  motionEnergy: 0,
-  silence: false,
-  strain: 0,
   disturbance: 0,
-  time: 0
+  strain: 0
 };
 
-const observers = [];
-
-export function observeField(fn) {
-  observers.push(fn);
+export function readField() {
+  return { ...fieldState };
 }
 
 export function writeField(partial) {
-  Object.assign(fieldState, partial);
-  observers.forEach(fn => fn(fieldState));
-}
+  if (typeof partial.disturbance === "number") {
+    fieldState.disturbance = Math.max(0, partial.disturbance);
+  }
 
-export function readField() {
-  return fieldState;
+  if (typeof partial.strain === "number") {
+    fieldState.strain = Math.max(0, partial.strain);
+  }
 }
