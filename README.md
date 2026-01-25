@@ -40,3 +40,10 @@ Any modification that introduces:
 - Goal-oriented responses
 
 Violates the field and must not be merged.
+
+---
+
+Field Integrity Lock engaged.
+No behavioral extensions permitted.
+
+Temporal drift is sufficient.
