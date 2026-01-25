@@ -1,27 +1,19 @@
-// field/autonomous-temporal-drift.js
-// Introduces slow, irreversible temporal drift.
-// No input required. No memory retained. No reset.
+(function () {
+  let drift = { x: 0, y: 0 };
 
-import { readField, writeField } from "./shared-field.js";
+  function evolve() {
+    drift.x += (Math.random() - 0.5) * 0.0004;
+    drift.y += (Math.random() - 0.5) * 0.0004;
 
-let lastTick = Date.now();
-let driftAccumulator = 0;
+    drift.x *= 0.998;
+    drift.y *= 0.998;
 
-export function autonomousTemporalDrift() {
-  const now = Date.now();
-  const delta = now - lastTick;
-  lastTick = now;
+    setTimeout(evolve, 120);
+  }
 
-  // Time itself contributes disturbance
-  driftAccumulator += delta * 0.0000004;
+  evolve();
 
-  // Clamp to prevent runaway
-  driftAccumulator = Math.min(driftAccumulator, 0.08);
-
-  const state = readField();
-
-  writeField({
-    disturbance: state.disturbance + driftAccumulator * 0.15,
-    strain: Math.min(1, state.strain + driftAccumulator * 0.02)
-  });
-}
+  window.AWRF_DRIFT = {
+    get: () => ({ ...drift })
+  };
+})();
