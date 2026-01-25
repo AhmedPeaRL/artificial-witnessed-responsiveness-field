@@ -1,4 +1,17 @@
 import { Field, tick, disturb, updatePresence } from "./field.js";
+import { receiveInput } from "./reception/input.js";
+import { manifest } from "./manifestation/particles.js";
+import { enforceSilence } from "./silence/silence.js";
+import { involuntaryPulse } from "./field/involuntary-pulse.js";
+
+enforceSilence();
+const field = new RhythmicField();
+
+receiveInput((text) => {
+  const disturbance = { value: text, decay: 2000 };
+  field.witness(disturbance);
+  manifest(disturbance);
+});
 
 // canvas
 const canvas = document.createElement("canvas");
