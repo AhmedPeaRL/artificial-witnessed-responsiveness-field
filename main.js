@@ -1,19 +1,11 @@
-import { Field, tick, disturb, updatePresence, RhythmicField } from "./core/field.js";
-import { receiveInput } from "./reception/input.js";
+import { Field, tick, disturb, updatePresence } from "./field.js";
+import { involuntaryPulse } from "./field/involuntary-pulse.js";
 import { manifest } from "./manifestation/particles.js";
 import { enforceSilence } from "./silence/silence.js";
-import { involuntaryPulse } from "./field/involuntary-pulse.js";
 
 enforceSilence();
-const field = new RhythmicField();
 
-receiveInput((text) => {
-  const disturbance = { value: text, decay: 2000 };
-  field.witness(disturbance);
-  manifest(disturbance);
-});
-
-// canvas
+/* ---------------- Canvas ---------------- */
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 document.body.appendChild(canvas);
@@ -25,7 +17,7 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-// particles
+/* ---------------- Particles ---------------- */
 const COUNT = 180;
 const particles = Array.from({ length: COUNT }, () => ({
   x: Math.random() * canvas.width,
@@ -35,26 +27,7 @@ const particles = Array.from({ length: COUNT }, () => ({
   r: Math.random() * 1.4 + 0.4,
 }));
 
-// input
-const input = document.getElementById("input");
-const button = document.getElementById("enter");
-
-button.onclick = () => {
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      button.click();
-    }
-  });
-
-  const v = input.value.trim();
-  if (!v) return;
-  disturb(Math.min(1, v.length / 12));
-  input.disabled = true;
-  button.disabled = true;
-};
-
-// pointer / touch
+/* ---------------- Presence ---------------- */
 function handleMove(x, y) {
   updatePresence(x / canvas.width, y / canvas.height);
 }
@@ -68,13 +41,27 @@ canvas.addEventListener("touchmove", e => {
   handleMove(t.clientX, t.clientY);
 });
 
-// loop
+/* ---------------- Input (Silent Disturbance) ---------------- */
+const input = document.getElementById("input");
+
+input.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+
+  const value = input.value.trim();
+  if (!value) return;
+
+  const weight = Math.min(0.6, value.length / 18);
+  disturb(weight);
+
+  manifest({ value, decay: 2200 });
+  input.value = "";
+});
+
+/* ---------------- Loop ---------------- */
 function loop() {
   requestAnimationFrame(loop);
 
   tick(0.002);
-
-  // ← هنا القلب اللاإرادي
   involuntaryPulse(disturb);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -87,7 +74,7 @@ function loop() {
     const dy = cy - p.y;
 
     const influence =
-      0.0004 +
+      0.00035 +
       Field.breath * 0.0006 +
       Field.disturbance * 0.002;
 
