@@ -1,58 +1,66 @@
-import { readField, writeField } from "./field/shared-field.js";
-import { autonomousTemporalDrift } from "./field/autonomous-temporal-drift.js";
-
-// Canvas setup
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
+let width, height;
+let particles = [];
+const PARTICLE_COUNT = 900;
+
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resize);
 resize();
 
-// Initial field seed (non-zero, non-stable)
-writeField({
-  disturbance: Math.random() * 0.02,
-  strain: Math.random() * 0.01
-});
+class Particle {
+  constructor() {
+    this.reset();
+  }
 
-let lastFrame = performance.now();
+  reset() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = (Math.random() - 0.5) * 0.2;
+    this.life = Math.random() * 800 + 400;
+  }
 
-function loop(now) {
-  const delta = now - lastFrame;
-  lastFrame = now;
+  update(drift) {
+    this.x += this.vx + drift.x;
+    this.y += this.vy + drift.y;
+    this.life--;
 
-  // --- Autonomous evolution ---
-  autonomousTemporalDrift();
+    if (
+      this.x < 0 || this.x > width ||
+      this.y < 0 || this.y > height ||
+      this.life <= 0
+    ) {
+      this.reset();
+    }
+  }
 
-  const state = readField();
+  draw() {
+    ctx.fillStyle = "rgba(255,255,255,0.035)";
+    ctx.fillRect(this.x, this.y, 1, 1);
+  }
+}
 
-  // Natural decay without reset
-  writeField({
-    disturbance: state.disturbance * 0.9996,
-    strain: state.strain * 0.9998
-  });
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+  particles.push(new Particle());
+}
 
-  // --- Rendering ---
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function loop() {
+  ctx.fillStyle = "rgba(0,0,0,0.08)";
+  ctx.fillRect(0, 0, width, height);
 
-  const fade = 0.4 + Math.min(state.strain * 0.3, 0.3);
-  ctx.fillStyle = `rgba(255,255,255,${fade})`;
+  const drift = window.AWRF_DRIFT.get();
 
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
-
-  const radius =
-    Math.min(canvas.width, canvas.height) *
-    (0.12 + state.disturbance);
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.fill();
+  for (let p of particles) {
+    p.update(drift);
+    p.draw();
+  }
 
   requestAnimationFrame(loop);
 }
 
-requestAnimationFrame(loop);
+loop();
