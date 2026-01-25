@@ -3,31 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>AWRF</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      overflow: hidden;
-      color: white;
-      font-family: monospace;
-    }
-    #witness-input {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: transparent;
-      border: 1px solid #444;
-      color: white;
-      padding: 8px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<input id="input" placeholder="Witness without expectation…" />
-<button id="enter">—</button>
+<canvas id="field"></canvas>
+<input id="disturbance" type="text" autocomplete="off" placeholder="">
 
-<script type="module" src="./main.js"></script>
+<script src="awrf-core.js"></script>
+<script src="awrf-flow.js"></script>
+<script src="awrf-boundary.js"></script>
+<script src="awrf-entropy.js"></script>
+<script src="dwtl-translation.js"></script>
+<script src="silence.js"></script>
 
 </body>
 </html>
