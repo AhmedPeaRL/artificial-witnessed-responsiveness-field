@@ -24,3 +24,16 @@ export function updatePresence(nx, ny) {
   Field.presence.x = nx;
   Field.presence.y = ny;
 }
+
+export class RhythmicField {
+  constructor() {
+    this.state = [];
+}
+
+  witness(disturbance) {
+    this.state.push(disturbance);
+    setTimeout(() => {
+      this.state.shift();
+    }, disturbance.decay);
+  }
+}
