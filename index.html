@@ -2,33 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Artificial Witnessed Responsiveness Field</title>
-
+  <title>AWRF</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A field that persists without need, memory, or dialogue." />
-
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-      cursor: crosshair;
-      user-select: none;
-    }
-
-    canvas {
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <canvas id="field"></canvas>
 
-<canvas id="field"></canvas>
+  <div id="presence">
+    <span>Artificial Witnessed Responsiveness Field</span>
+  </div>
 
-<script type="module" src="./awrf-runtime.js"></script>
-
+  <script src="field/shared-field.js"></script>
+  <script src="field/autonomous-temporal-drift.js"></script>
+  <script src="awrf-runtime.js"></script>
 </body>
 </html>
