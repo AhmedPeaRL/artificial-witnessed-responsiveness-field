@@ -40,6 +40,12 @@ const input = document.getElementById("input");
 const button = document.getElementById("enter");
 
 button.onclick = () => {
+  input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    button.click();
+  }
+});
   const v = input.value.trim();
   if (!v) return;
   disturb(Math.min(1, v.length / 12));
