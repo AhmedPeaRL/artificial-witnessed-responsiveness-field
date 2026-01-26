@@ -3,6 +3,10 @@
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
+if (!ctx) {
+  throw new Error("Canvas context unavailable");
+}
+
 let width, height;
 let particles = [];
 const BASE_PARTICLE_COUNT = 900;
@@ -47,7 +51,6 @@ class Particle {
   }
 }
 
-// init particles
 function seed(count) {
   particles = [];
   for (let i = 0; i < count; i++) {
@@ -60,24 +63,23 @@ function loop() {
   ctx.fillStyle = "rgba(0,0,0,0.08)";
   ctx.fillRect(0, 0, width, height);
 
+  // --- Rhythmic Disclosure (External, Optional) ---
+  const rhythm = window.RHYTHMIC_FIELD_PARAMETERS || null;
+
+  const densityFactor = rhythm?.density ?? 1;
+  const decayFactor = rhythm?.decay ?? 1;
+  const alpha = rhythm?.alpha ?? 0.035;
+  const resistance = rhythm?.driftResistance ?? 1;
+
   const baseDrift = window.AWRF_DRIFT
-  ? window.AWRF_DRIFT.get()
-  : { x: 0, y: 0 };
+    ? window.AWRF_DRIFT.get()
+    : { x: 0, y: 0 };
 
-const resistance = rhythm?.driftResistance ?? 1;
+  const drift = {
+    x: baseDrift.x / resistance,
+    y: baseDrift.y / resistance
+  };
 
-const drift = {
-  x: baseDrift.x / resistance,
-  y: baseDrift.y / resistance
-};
-
-// --- Rhythmic Disclosure (Implicit, External Only) ---
-const rhythm = window.RHYTHMIC_FIELD_PARAMETERS || null;
-
-const densityFactor = rhythm?.density ?? 1;
-const decayFactor = rhythm?.decay ?? 1;
-const alpha = rhythm?.alpha ?? 0.035;
-  
   const targetCount = Math.floor(BASE_PARTICLE_COUNT * densityFactor);
   if (targetCount !== particles.length) {
     seed(targetCount);
