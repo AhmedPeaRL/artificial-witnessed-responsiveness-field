@@ -1,5 +1,3 @@
-import { readContradictions } from "./contradiction-registry/index.js";
-import { getFieldState } from "./shared-field.js";
 
 export function semanticDisturbance() {
   const state = getFieldState();
