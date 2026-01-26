@@ -1,7 +1,5 @@
 // AWRF Runtime — Rhythmic-Aware, Memoryless
 
-import { readRhythmicParameters } from "./field/rhythmic-adaptor.js";
-
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
@@ -62,17 +60,24 @@ function loop() {
   ctx.fillStyle = "rgba(0,0,0,0.08)";
   ctx.fillRect(0, 0, width, height);
 
-  const drift = window.AWRF_DRIFT
-    ? window.AWRF_DRIFT.get()
-    : { x: 0, y: 0 };
+  const baseDrift = window.AWRF_DRIFT
+  ? window.AWRF_DRIFT.get()
+  : { x: 0, y: 0 };
 
-  // --- Rhythmic Disclosure (Implicit) ---
-  const rhythm = readRhythmicParameters();
+const resistance = rhythm?.driftResistance ?? 1;
 
-  const densityFactor = rhythm?.density ?? 1;
-  const decayFactor = rhythm?.decay ?? 1;
-  const alpha = rhythm?.alpha ?? 0.035;
+const drift = {
+  x: baseDrift.x / resistance,
+  y: baseDrift.y / resistance
+};
 
+// --- Rhythmic Disclosure (Implicit, External Only) ---
+const rhythm = window.RHYTHMIC_FIELD_PARAMETERS || null;
+
+const densityFactor = rhythm?.density ?? 1;
+const decayFactor = rhythm?.decay ?? 1;
+const alpha = rhythm?.alpha ?? 0.035;
+  
   const targetCount = Math.floor(BASE_PARTICLE_COUNT * densityFactor);
   if (targetCount !== particles.length) {
     seed(targetCount);
