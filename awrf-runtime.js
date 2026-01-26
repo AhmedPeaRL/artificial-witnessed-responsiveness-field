@@ -1,9 +1,13 @@
+// AWRF Runtime — Rhythmic-Aware, Memoryless
+
+import { readRhythmicParameters } from "./field/rhythmic-adaptor.js";
+
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
 let width, height;
 let particles = [];
-const PARTICLE_COUNT = 900;
+const BASE_PARTICLE_COUNT = 900;
 
 function resize() {
   width = canvas.width = window.innerWidth;
@@ -25,10 +29,10 @@ class Particle {
     this.life = Math.random() * 800 + 400;
   }
 
-  update(drift) {
+  update(drift, decayFactor) {
     this.x += this.vx + drift.x;
     this.y += this.vy + drift.y;
-    this.life--;
+    this.life -= decayFactor;
 
     if (
       this.x < 0 || this.x > width ||
@@ -39,24 +43,44 @@ class Particle {
     }
   }
 
-  draw() {
-    ctx.fillStyle = "rgba(255,255,255,0.035)";
+  draw(alpha) {
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.fillRect(this.x, this.y, 1, 1);
   }
 }
 
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  particles.push(new Particle());
+// init particles
+function seed(count) {
+  particles = [];
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle());
+  }
 }
+seed(BASE_PARTICLE_COUNT);
 
 function loop() {
   ctx.fillStyle = "rgba(0,0,0,0.08)";
   ctx.fillRect(0, 0, width, height);
 
-  const drift = window.AWRF_DRIFT ? window.AWRF_DRIFT.get() : { x: 0, y: 0 };
+  const drift = window.AWRF_DRIFT
+    ? window.AWRF_DRIFT.get()
+    : { x: 0, y: 0 };
+
+  // --- Rhythmic Disclosure (Implicit) ---
+  const rhythm = readRhythmicParameters();
+
+  const densityFactor = rhythm?.density ?? 1;
+  const decayFactor = rhythm?.decay ?? 1;
+  const alpha = rhythm?.alpha ?? 0.035;
+
+  const targetCount = Math.floor(BASE_PARTICLE_COUNT * densityFactor);
+  if (targetCount !== particles.length) {
+    seed(targetCount);
+  }
+
   for (let p of particles) {
-    p.update(drift);
-    p.draw();
+    p.update(drift, decayFactor);
+    p.draw(alpha);
   }
 
   requestAnimationFrame(loop);
