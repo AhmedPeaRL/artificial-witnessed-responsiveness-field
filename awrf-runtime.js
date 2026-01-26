@@ -53,8 +53,7 @@ function loop() {
   ctx.fillStyle = "rgba(0,0,0,0.08)";
   ctx.fillRect(0, 0, width, height);
 
-  const drift = window.AWRF_DRIFT.get();
-
+  const drift = window.AWRF_DRIFT ? window.AWRF_DRIFT.get() : { x: 0, y: 0 };
   for (let p of particles) {
     p.update(drift);
     p.draw();
