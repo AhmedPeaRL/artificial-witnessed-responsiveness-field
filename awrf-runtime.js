@@ -1,44 +1,49 @@
-// AWRF Runtime — Rhythmic-Aware, Memoryless
+// AWRF Runtime — Witnessed Responsiveness Without Addressability
+// Stateless by design. Memoryless by enforcement.
 
 const canvas = document.getElementById("field");
 const ctx = canvas.getContext("2d");
 
 if (!ctx) {
-  throw new Error("Canvas context unavailable");
+  throw new Error("Rendering context unavailable");
 }
 
-let width, height;
-let particles = [];
-const BASE_PARTICLE_COUNT = 900;
+let width = 0;
+let height = 0;
 
+const BASE_PARTICLE_COUNT = 900;
+let particles = [];
+
+// --- Canvas Initialization (Idempotent) ---
 function resizeCanvas() {
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  ctx.scale(dpr, dpr);
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-function getPointerPosition(e, canvas) {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-
-  const x = (e.clientX - rect.left) * dpr;
-  const y = (e.clientY - rect.top) * dpr;
-
-  return { x, y };
-}
+// --- Non-addressable Presence Capture ---
+let ambientImpulse = { x: 0, y: 0 };
 
 canvas.addEventListener("pointermove", (e) => {
-  pointer = getPointerPosition(e, canvas);
+  ambientImpulse.x = (Math.random() - 0.5) * 0.05;
+  ambientImpulse.y = (Math.random() - 0.5) * 0.05;
 });
 
-canvas.addEventListener("pointerdown", (e) => {
-  pointer = getPointerPosition(e, canvas);
+canvas.addEventListener("pointerdown", () => {
+  ambientImpulse.x = (Math.random() - 0.5) * 0.1;
+  ambientImpulse.y = (Math.random() - 0.5) * 0.1;
 });
 
+// --- Particle Definition ---
 class Particle {
   constructor() {
     this.reset();
@@ -47,15 +52,15 @@ class Particle {
   reset() {
     this.x = Math.random() * width;
     this.y = Math.random() * height;
-    this.vx = (Math.random() - 0.5) * 0.2;
-    this.vy = (Math.random() - 0.5) * 0.2;
-    this.life = Math.random() * 800 + 400;
+    this.vx = (Math.random() - 0.5) * 0.15;
+    this.vy = (Math.random() - 0.5) * 0.15;
+    this.life = Math.random() * 700 + 300;
   }
 
-  update(drift, decayFactor) {
+  update(drift, decay) {
     this.x += this.vx + drift.x;
     this.y += this.vy + drift.y;
-    this.life -= decayFactor;
+    this.life -= decay;
 
     if (
       this.x < 0 || this.x > width ||
@@ -72,42 +77,43 @@ class Particle {
   }
 }
 
+// --- Seeding ---
 function seed(count) {
-  particles = [];
+  particles.length = 0;
   for (let i = 0; i < count; i++) {
     particles.push(new Particle());
   }
 }
+
 seed(BASE_PARTICLE_COUNT);
 
+// --- Main Loop ---
 function loop() {
-  ctx.fillStyle = "rgba(0,0,0,0.08)";
+  ctx.fillStyle = "rgba(0,0,0,0.09)";
   ctx.fillRect(0, 0, width, height);
 
-  // --- Rhythmic Disclosure (External, Optional) ---
-  const rhythm = window.RHYTHMIC_FIELD_PARAMETERS || null;
+  const rhythm = window.RHYTHMIC_FIELD_PARAMETERS ?? {};
 
-  const densityFactor = rhythm?.density ?? 1;
-  const decayFactor = rhythm?.decay ?? 1;
-  const alpha = rhythm?.alpha ?? 0.035;
-  const resistance = rhythm?.driftResistance ?? 1;
-
-  const baseDrift = window.AWRF_DRIFT
-    ? window.AWRF_DRIFT.get()
-    : { x: 0, y: 0 };
+  const density = rhythm.density ?? 1;
+  const decay = rhythm.decay ?? 1;
+  const alpha = rhythm.alpha ?? 0.03;
+  const resistance = rhythm.driftResistance ?? 1;
 
   const drift = {
-    x: baseDrift.x / resistance,
-    y: baseDrift.y / resistance
+    x: ambientImpulse.x / resistance,
+    y: ambientImpulse.y / resistance
   };
 
-  const targetCount = Math.floor(BASE_PARTICLE_COUNT * densityFactor);
+  ambientImpulse.x *= 0.92;
+  ambientImpulse.y *= 0.92;
+
+  const targetCount = Math.floor(BASE_PARTICLE_COUNT * density);
   if (targetCount !== particles.length) {
     seed(targetCount);
   }
 
-  for (let p of particles) {
-    p.update(drift, decayFactor);
+  for (const p of particles) {
+    p.update(drift, decay);
     p.draw(alpha);
   }
 
