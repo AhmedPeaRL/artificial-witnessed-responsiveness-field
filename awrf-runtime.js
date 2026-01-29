@@ -11,6 +11,16 @@ let width, height;
 let particles = [];
 const BASE_PARTICLE_COUNT = 900;
 
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.scale(dpr, dpr);
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
 function getPointerPosition(e, canvas) {
   const rect = canvas.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
@@ -69,16 +79,6 @@ function seed(count) {
   }
 }
 seed(BASE_PARTICLE_COUNT);
-
-function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  ctx.scale(dpr, dpr);
-}
-
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
 
 function loop() {
   ctx.fillStyle = "rgba(0,0,0,0.08)";
